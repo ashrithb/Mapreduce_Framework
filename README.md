@@ -12,7 +12,7 @@ This project consists of two major pieces of code. A manager that listens for us
 
 - **Distributed Processing**: Harness the power of multiple computers to process data concurrently.
 - **Fault Tolerance**: The framework ensures that tasks are recovered and re-executed in case of failures.
-- **Networking**: Seamless communication between the Manager and Worker nodes through efficient socket implementation.
+- **Networking**: Seamless communication between the Manager and Worker nodes through efficient socket implementation and TCP/UDP.
 - **Concurrency**: Utilizes the OS-provided facilities (threads and processes) to achieve high-level concurrency and parallelism.
 
 ## Architecture
@@ -20,23 +20,62 @@ This project consists of two major pieces of code. A manager that listens for us
 - **Manager**: The central node listens for user-submitted MapReduce jobs and efficiently distributes the work among Workers.
 - **Worker Instances**: Multiple worker nodes receive instructions from the Manager and execute the map and reduce tasks that form a MapReduce program.
 
-## Usage (Hypothetical)
+## Manager and Worker
 
-\```bash
+These components play a crucial role in the functioning and orchestration of the MapReduce jobs.
+
+### Manager Overview
+
+The Manager module handles job submissions and coordination between Workers.
+
+**Command-line options**:
+- `host`: Host address to listen for messages.
+- `port`: TCP port for messages and UDP port for heartbeats. (Note: TCP and UDP sockets are independent, hence we can use the same port number.)
+- `logfile`: File path where logs are written. If not provided, stderr is used.
+- `loglevel`: Severity level threshold for writing logs.
+- `shared_dir`: Directory for a shared temporary space. If not provided, a directory chosen by the standard library is used.
+
+**Startup Sequence**:
+1. Spawn a new thread to listen for UDP heartbeat messages from Workers.
+2. Initiate additional threads or setups as necessary. Consider another thread for fault tolerance.
+3. Open a new TCP socket on the provided port and initiate listening.
+4. Continuously listen for incoming messages, discarding invalid ones, especially those that fail JSON decoding. For instance:
+5. The Manager constructor should not return until all its threads have concluded.
+
+### Worker Overview
+
+The Worker module is responsible for the actual data processing as instructed by the Manager.
+
+**Command-line options**:
+- `host`: Host address for message listening.
+- `port`: TCP port for message listening.
+- `manager-host`: Address for sending messages to the Manager.
+- `manager-port`: TCP and UDP ports for Manager communication.
+- `logfile`: File for logs. Defaults to `stderr` if not provided.
+- `loglevel`: Determines the threshold for log severity levels.
+
+**Initialization Sequence**:
+1. Initiate a TCP socket on the designated port and commence listening. Ensure invalid messages, especially those failing JSON decoding, are discarded.
+2. Dispatch a `register` message to the Manager. Ensure the Worker is listening before transmitting this message.
+3. After receiving the `register_ack` message from the Manager, initiate a new thread for the sole purpose of sending heartbeat messages to the Manager.
+
+
+## Usage
+
+```bash
 # Start the Manager node
 python manager.py start
 
 # Submit a MapReduce job (example)
 python submit_job.py --input data.txt --map mapper.py --reduce reducer.py
-\```
+```
 
-(Note: Since the actual code isn't provided, this usage section is hypothetical and for illustrative purposes only.)
 
 ## Learning Goals Achieved
 
 - **MapReduce Execution**: Gained deep insights into the inner workings of the MapReduce paradigm and its execution.
 - **Distributed Systems**: Developed understanding and practical experience with basic distributed systems.
-- **Fault Tolerance**: Implemented mechanisms to handle node failures gracefully.
+- **Fault Tolerance**: Implemented mechanisms to handle node failures gracefully with Worker's heartbeat thread to send updates to the Manager via UDP. This allows the manager to maximize concurrency, but avoid duplication!
 - **Concurrency**: Leveraged OS facilities for managing threads and processes.
 - **Networking**: Implemented socket programming to ensure seamless communication between different components of the framework.
 
