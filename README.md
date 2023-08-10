@@ -1,16 +1,12 @@
-# Mapreduce_Framework
-The framework executes MapReduce programs with distributed processing on a cluster of computers. This project includes MapReduce program execution, basic distributed systems, fault tolerance, OS-provided concurrency facilities (threads and processes), and networking (sockets). This was inspired by [Google’s original MapReduce paper](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf), and all of this is built in Python!!
+# MapReduce Framework (Inspired by Google's Model)
+
+## Overview
+This MapReduce framework aims to bring the powerful distributed data processing capabilities, similar to those of Google, to any cluster of computers. By using this framework, you can process vast amounts of data using the MapReduce paradigm with ease and reliability. It includes MapReduce program execution, basic distributed systems, fault tolerance, OS-provided concurrency facilities (threads and processes), and networking (sockets). This was inspired by [Google’s original MapReduce paper](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf), and all of this is built in Python!!
 
 This project consists of two major pieces of code. A manager that listens for user-submitted MapReduce jobs and distributes the work among Workers. Multiple Worker instances receive instructions from the Manager and execute map and reduce tasks that combine to form a MapReduce program. Here is a basic rundown of what my program looks like: 
 ![flowchart excalidraw](https://github.com/ashrithb/Mapreduce_Framework/assets/92128095/67808b2f-53d0-415b-bb66-3dac353b6dc6)
 
-# MapReduce Framework (Inspired by Google's Model)
 
-A distributed MapReduce framework developed in Python, mimicking Google's original model. The framework allows for distributed processing across a cluster of computers, emphasizing concurrency, fault-tolerance, and efficient networking.
-
-## Overview
-
-This MapReduce framework aims to bring the powerful distributed data processing capabilities, similar to those of Google, to any cluster of computers. By using this framework, you can process vast amounts of data using the MapReduce paradigm with ease and reliability.
 
 ### Features
 
